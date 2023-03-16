@@ -1,12 +1,22 @@
 import {Request, Response} from "express";
-import {GetOneQuestionUseCase} from "./getOneQuestionUseCase";
-import {typeEnum} from "../../dtos/typeEnum";
 
-export class GetOneQuestionController {
-    async handle(req: Request, res: Response) {
-        const getOneQuestionUseCase = new GetOneQuestionUseCase();
-        console.log(parseInt(req.params.id))
-        const q = await getOneQuestionUseCase.execute(parseInt(req.params.id));
+import {typeEnum} from "./dtos/typeEnum";
+import {QuestionService} from "./QuestionService";
+
+
+const service = new QuestionService();
+export class QuestionController {
+    async createQuestionHandle(req:Request,res:Response){
+        const body = req.body;
+
+        const result = service.createQuestion(body)
+
+        return res.status(201).json(result)
+    }
+
+    async getOneQuestionHandle(req:Request,res:Response){
+
+        const q = await service.getOneQuestion(parseInt(req.params.id));
 
         let optionList = [];
         if (q.type == typeEnum.MULTIPLE_CHOICE && q.options != null) {
@@ -15,7 +25,7 @@ export class GetOneQuestionController {
                 {id: 2, description: q.options.option2},
                 {id: 3, description: q.options.option3},
                 {id: 4, description: q.options.option4}
-                )
+            )
         }
 
         const questionResponse = {

@@ -1,10 +1,10 @@
-import {CreateQuestionRequest} from "../../dtos/createQuestionRequest";
-import {prisma} from "../../../../prisma/client";
-import {typeEnum} from "../../dtos/typeEnum";
+import {CreateQuestionRequest} from "./dtos/createQuestionRequest";
+import {typeEnum} from "./dtos/typeEnum";
+import {prisma} from "../../prisma/client";
+import {AppError} from "../../errors/AppError";
 
-export class CreateQuestionUseCase {
-
-    async execute(reqList: CreateQuestionRequest[]): Promise<void> {
+export class QuestionService {
+    async createQuestion(reqList: CreateQuestionRequest[]): Promise<void> {
 
         for (const req of reqList) {
             let trueOrFalseAnswer = null;
@@ -17,7 +17,7 @@ export class CreateQuestionUseCase {
                 multipleChoiceAnswer = correct.optionNumber;
             }
 
-            const question = prisma.question.create({
+            const question = await prisma.question.create({
                 data: {
                     questionDescription: req.questionDescription,
                     type: req.type,
@@ -27,11 +27,9 @@ export class CreateQuestionUseCase {
                     trueOrFalseAnswer
                 }
             })
-            console.log(req)
-            console.log(req.options)
 
             if (req.type === typeEnum.MULTIPLE_CHOICE && req.options.length === 4) {
-                const questionId = await question.then(result => result.id);
+                const questionId = question.id
                 console.log(questionId)
                 await prisma.option.create({
                     data:
@@ -46,5 +44,25 @@ export class CreateQuestionUseCase {
             }
         }
 
+    }
+
+    async getOneQuestion(questionId: number) {
+
+        const q = await prisma.question.findUnique({
+            where: {
+                id: questionId
+            },
+            include: {
+                options: true,
+                session:true
+            }
+        })
+
+
+        if (q) {
+            return q
+        }
+
+        throw new AppError("Session not found")
     }
 }

@@ -1,13 +1,11 @@
 import {Router} from "express";
-import {CreateQuestionController} from "../modules/question/useCases/CreateQuestion/createQuestionController";
-import {GetOneQuestionController} from "../modules/question/useCases/GetOneQuestion/getOneQuestionController";
+import {QuestionController} from "../modules/question/QuestionController";
 
-const createQuestionController = new CreateQuestionController();
-const getOneQuestionController = new GetOneQuestionController();
+const questionController = new QuestionController();
 
 const questionRoute = Router();
 
-questionRoute.post("/", createQuestionController.handle);
-questionRoute.get("/:id", getOneQuestionController.handle);
+questionRoute.post("/", questionController.createQuestionHandle);
+questionRoute.get("/:id", questionController.getOneQuestionHandle);
 
 export {questionRoute};
