@@ -1,8 +1,8 @@
-import {CreateChallengerRequest} from "../dtos/createChallengerRequest";
+import {CreateChallengerRequest} from "./dtos/createChallengerRequest";
 import {Challenger, Session} from "@prisma/client";
-import {prisma} from "../../../prisma/client";
+import {prisma} from "../../prisma/client";
 
-export class CreateChallengerUseCase {
+export class ChallengerService {
     async execute({
                      challengerName,
                      score,

@@ -1,10 +1,10 @@
 import {Router} from "express";
-import {CreateChallengerController} from "../modules/challenger/useCases/createChallengerController";
+import {ChallengerController} from "../modules/challenger/ChallengerController";
 
-const createChallengerController = new CreateChallengerController();
+const controller = new ChallengerController();
 
 const challengerRoute = Router();
 
-challengerRoute.post("/", createChallengerController.handle)
+challengerRoute.post("/", controller.createChallengerHandle)
 
 export {challengerRoute}
