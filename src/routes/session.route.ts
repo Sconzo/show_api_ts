@@ -1,20 +1,12 @@
 import {Router} from "express";
-import {CreateSessionController} from "../modules/session/useCases/CreateSession/createSessionController";
-import {GetAllSessionsController} from "../modules/session/useCases/GetAllSessions/getAllSessionsController";
-import {GetOneSessionController} from "../modules/session/useCases/GetOneSession/getOneSessionController";
-import {
-    GetNumberQuestionsCreatedController
-} from "../modules/session/useCases/GetNumberQuestionsCreated/getNumberQuestionsCreatedController";
+import {SessionController} from "../modules/session/SessionController";
 
-const createSessionController = new CreateSessionController();
-const getAllSessionsController = new GetAllSessionsController();
-const getOneSessionController = new GetOneSessionController();
-const getNumberQuestionsCreatedController = new GetNumberQuestionsCreatedController();
+const controller = new SessionController()
 const sessionRoute = Router();
 
-sessionRoute.post("/", createSessionController.handle);
-sessionRoute.get("/all", getAllSessionsController.handle);
-sessionRoute.get("/:id", getOneSessionController.handle);
-sessionRoute.get("/questions-created/:id", getNumberQuestionsCreatedController.handle);
+sessionRoute.post("/", controller.createSessionHandle);
+sessionRoute.get("/all", controller.getAllSessionsHandle);
+sessionRoute.get("/:id", controller.getOneSessionHandle);
+sessionRoute.get("/questions-created/:id", controller.getNumberQuestionsCreatedHandle);
 
 export {sessionRoute};
