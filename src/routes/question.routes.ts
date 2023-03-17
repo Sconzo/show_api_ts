@@ -5,7 +5,9 @@ const questionController = new QuestionController();
 
 const questionRoute = Router();
 
+questionRoute.get("/check", questionController.checkAnswerHandle);
 questionRoute.post("/", questionController.createQuestionHandle);
 questionRoute.get("/:id", questionController.getOneQuestionHandle);
+questionRoute.get("/", questionController.getQuestionForChallengerHandle);
 
 export {questionRoute};

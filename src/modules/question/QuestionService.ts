@@ -43,7 +43,6 @@ export class QuestionService {
                 })
             }
         }
-
     }
 
     async getOneQuestion(questionId: number) {
@@ -54,15 +53,47 @@ export class QuestionService {
             },
             include: {
                 options: true,
-                session:true
+                session: true
             }
         })
-
 
         if (q) {
             return q
         }
-
         throw new AppError("Session not found")
+    }
+
+    async getQuestionForChallenger(sessionId: number) {
+
+        const responseList = await prisma.question.findMany({
+            where: {
+                sessionId: sessionId
+            },
+            include: {
+                options: true,
+                session: true
+            }
+        })
+
+        if (responseList) {
+            return responseList
+        }
+        throw new AppError("Session not found")
+    }
+
+    async checkAnswer(questionId: number, choiceId: number){
+        const question = await prisma.question.findUnique({where:{id:questionId}})
+
+        if(question){
+            if(question.type === typeEnum.MULTIPLE_CHOICE){
+                return (question.multipleChoiceAnswer === choiceId);
+            }
+            else if(question.type === typeEnum.TRUE_OR_FALSE){
+                let choiceBoolean;
+                choiceBoolean = choiceId === 1;
+                return (question.trueOrFalseAnswer === choiceBoolean);
+            }
+        }
+        throw new AppError("Erro",404);
     }
 }
