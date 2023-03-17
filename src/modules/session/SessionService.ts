@@ -1,21 +1,22 @@
 import {CreateSessionRequest} from "./dtos/createSessionRequest";
-import {Session} from "@prisma/client";
+import {Prisma, Session} from "@prisma/client";
 import {prisma} from "../../prisma/client";
 import {AppError} from "../../errors/AppError";
+import {SessionResponse} from "./dtos/sessionResponse";
 
 export class SessionService {
     async createSession({
-                      sessionName,
-                      numberOfQuestions,
-                      numberOfGroups,
-                      numberOfChallengers,
-                      cards,
-                      studentsHelp,
-                      skips,
-                      audienceHelp
-                  }: CreateSessionRequest):Promise<Session> {
+                            sessionName,
+                            numberOfQuestions,
+                            numberOfGroups,
+                            numberOfChallengers,
+                            cards,
+                            studentsHelp,
+                            skips,
+                            audienceHelp
+                        }: CreateSessionRequest): Promise<Session> {
         const sessionNameAlreadyExists = await prisma.session.findUnique({
-            where:{
+            where: {
                 sessionName
             }
         })
@@ -40,9 +41,18 @@ export class SessionService {
         });
     }
 
-    async getAllSessions(): Promise<Session[]>{
-        return prisma.session.findMany({});
+    async getAllSessions(): Promise<SessionResponse[]> {
+        const sessionList = await prisma.session.findMany({});
+
+        let sessionResponseList: SessionResponse[] = [];
+        for (let session of sessionList) {
+            let sessionResponse = this.entityToResponse(session);
+            sessionResponseList.push(sessionResponse)
+        }
+        return sessionResponseList;
     }
+
+
 
     async getNumberQuestionsCreated(sessionId: number): Promise<number> {
 
@@ -54,17 +64,35 @@ export class SessionService {
 
         return aa.length;
     }
-    async getOneSession(sessionId:number) : Promise<Session>{
+
+    async getOneSession(sessionId: number): Promise<SessionResponse> {
         const session = await prisma.session.findUnique({
-            where : {
-                id : sessionId
+            where: {
+                id: sessionId
             }
         })
 
-        if(session) {
-            return session
+        if (session) {
+            return this.entityToResponse(session)
         }
 
         throw new AppError("Session not found")
+    }
+
+
+    private entityToResponse(session: Prisma.SessionGetPayload<{}>) {
+        let sessionResponse: SessionResponse = {
+            sessionId: session.id,
+            sessionName: session.sessionName,
+            numberOfQuestions: session.numberOfQuestions,
+            numberOfGroups: session.numberOfGroups,
+            numberOfChallengers: session.numberOfChallengers,
+            cards: session.cards,
+            studentsHelp: session.studentsHelp,
+            skips: session.skips,
+            audienceHelp: session.audienceHelp,
+            createdIn: session.createdAt.toString()
+        };
+        return sessionResponse;
     }
 }
