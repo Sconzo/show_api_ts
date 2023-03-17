@@ -5,19 +5,10 @@ import {AppError} from "../../errors/AppError";
 import {SessionResponse} from "./dtos/sessionResponse";
 
 export class SessionService {
-    async createSession({
-                            sessionName,
-                            numberOfQuestions,
-                            numberOfGroups,
-                            numberOfChallengers,
-                            cards,
-                            studentsHelp,
-                            skips,
-                            audienceHelp
-                        }: CreateSessionRequest): Promise<Session> {
+    async createSession(req: CreateSessionRequest): Promise<Session> {
         const sessionNameAlreadyExists = await prisma.session.findUnique({
             where: {
-                sessionName
+                sessionName : req.sessionName
             }
         })
 
@@ -29,14 +20,14 @@ export class SessionService {
 
         return prisma.session.create({
             data: {
-                sessionName,
-                numberOfQuestions,
-                numberOfGroups,
-                numberOfChallengers,
-                cards,
-                studentsHelp,
-                skips,
-                audienceHelp
+                sessionName : req.sessionName,
+                numberOfQuestions : parseInt(<string><unknown>req.numberOfQuestions),
+                numberOfGroups : parseInt(<string><unknown>req.numberOfGroups),
+                numberOfChallengers : parseInt(<string><unknown>req.numberOfChallengers),
+                cards : req.cards,
+                studentsHelp : req.studentsHelp,
+                skips : req.skips,
+                audienceHelp : req.audienceHelp
             }
         });
     }
