@@ -1,6 +1,6 @@
 export interface CreateChallengerRequest {
 
-    challengerName: string;
+    name: string;
     score: number;
     sessionId: number;
     cardsLeft: number;
