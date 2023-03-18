@@ -16,3 +16,6 @@ app.use(routes)
 app.listen(port, () => {
     console.log("App is up and running")
 })
+
+
+export default app;
