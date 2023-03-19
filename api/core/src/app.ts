@@ -1,6 +1,6 @@
 import  express from "express"
 import "express-async-error";
-import {routes} from "./src/routes";
+import {routes} from "./routes";
 
 const app = express();
 const bodyParser = require('body-parser')
